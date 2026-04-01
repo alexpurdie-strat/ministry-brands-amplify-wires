@@ -1,715 +1,670 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JA BizTown RFP</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --black: #1d1e2c;
-    --white: #fbfcff;
-    --red: #e4572e;
-    --gray: #888;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background: #fbfcff;
-    color: #1d1e2c;
-    font-size: 14px;
-    line-height: 1.4;
-  }
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;font-family:'DM Sans',Arial,Helvetica,sans-serif!important}
+body{background:#f0ede8;min-height:100vh}
 
-  /* GATE */
-  #gate {
-    position: fixed; inset: 0;
-    background: #1d1e2c;
-    display: flex; align-items: center; justify-content: center;
-    z-index: 9999;
-  }
-  #gate .g-inner { text-align: center; max-width: 340px; padding: 24px; }
-  #gate .g-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #e4572e; margin-bottom: 16px; }
-  #gate h2 { font-family: 'Playfair Display', serif; font-size: 32px; color: #fbfcff; margin-bottom: 8px; letter-spacing: -0.02em; }
-  #gate .g-sub { font-size: 12px; color: #666; margin-bottom: 36px; }
-  #gate input {
-    width: 100%; padding: 12px 0;
-    background: none; border: none; border-bottom: 1px solid #3a3b50;
-    color: #fbfcff; font-size: 14px; font-family: 'Inter', sans-serif;
-    outline: none; text-align: center; letter-spacing: 0.08em;
-    margin-bottom: 8px; transition: border-color 0.2s;
-  }
-  #gate input::placeholder { color: #444; }
-  #gate input:focus { border-bottom-color: #e4572e; }
-  #pw-error { font-size: 10px; color: #e4572e; min-height: 14px; margin-bottom: 20px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
-  #gate button {
-    background: none; border: 1px solid #3a3b50; color: #888;
-    padding: 10px 32px; font-size: 10px; font-weight: 700;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s;
-  }
-  #gate button:hover { border-color: #e4572e; color: #e4572e; }
+.utility-bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 24px;height:56px;background:white;border-bottom:0.5px solid #e8e8e8;position:sticky;top:0;z-index:300}
+.util-left{display:flex;align-items:center;gap:16px}
+.util-link{font-size:12px;color:#888;cursor:pointer;transition:color 0.1s}
+.util-link:hover{color:#46435D}
+.util-sep{color:#ddd;font-size:10px}
+.util-center{display:flex;align-items:center;justify-content:center;gap:10px}
+.logo-wordmark{font-size:24px;font-weight:700;color:#46435D;letter-spacing:-0.03em}
+.util-right{display:flex;align-items:center;justify-content:flex-end;gap:16px}
+.search-field{display:flex;align-items:center;gap:6px;cursor:text}
+.search-icon{color:#bbb;font-size:14px}
+.search-placeholder{font-size:12px;color:#bbb}
 
-  /* HEADER */
-  .rfp-header {
-    background: #1d1e2c;
-    color: #fbfcff;
-    padding: 32px 32px 28px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: end;
-    gap: 24px;
-    border-bottom: 4px solid #e4572e;
-  }
-  .rfp-header .eyebrow {
-    font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
-    text-transform: uppercase; color: #e4572e; margin-bottom: 8px;
-  }
-  .rfp-header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 42px; font-weight: 700;
-    letter-spacing: -0.02em; line-height: 1.05;
-  }
-  .rfp-header .meta {
-    text-align: right; font-size: 12px;
-    color: #999; line-height: 1.8;
-  }
-  .rfp-header .meta strong { color: #fbfcff; font-weight: 500; }
+.nav-stage{display:flex;justify-content:center;align-items:center;padding:14px 32px;position:sticky;top:56px;z-index:200;pointer-events:none}
+.nav-group{display:inline-flex;align-items:center;gap:10px;position:relative;pointer-events:all}
+.island{background:white;border:0.5px solid #e0e0e0;border-radius:999px;display:inline-flex;align-items:center;gap:2px;padding:5px 8px;box-shadow:0 2px 16px rgba(0,0,0,0.08)}
+.nav-btn{background:none;border:none;padding:9px 18px;font-size:14px;color:#666;cursor:pointer;border-radius:999px;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all 0.12s}
+.nav-btn:hover,.nav-btn.open{color:#46435D;background:#f5f4f8}
+.chevron{font-size:8px;color:#ccc;transition:transform 0.15s}
+.nav-btn.open .chevron{transform:rotate(180deg)}
+.demo-island{background:#46435D;border-radius:999px;padding:10px 22px;box-shadow:0 2px 16px rgba(70,67,93,0.25);cursor:pointer;transition:background 0.12s}
+.demo-island:hover{background:#5a576e}
+.demo-label{font-size:13px;font-weight:500;color:white}
 
-  /* NAV */
-  .nav-strip {
-    background: #1d1e2c;
-    display: flex; overflow-x: auto;
-    border-bottom: 2px solid #e4572e;
-  }
-  .nav-strip button {
-    background: none; border: none; border-right: 1px solid #2e2f40;
-    color: #999; font-size: 11px; font-weight: 700;
-    letter-spacing: 0.08em; text-transform: uppercase;
-    font-family: 'Inter', sans-serif;
-    padding: 12px 18px; cursor: pointer; white-space: nowrap;
-    transition: background 0.15s, color 0.15s;
-  }
-  .nav-strip button:hover { background: #2a2b3d; color: #fbfcff; }
-  .nav-strip button.active { background: #e4572e; color: #fbfcff; }
+.mega{display:none;position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);background:white;border:0.5px solid #e0e0e0;z-index:200;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.1);overflow:hidden;min-width:700px}
+.mega.show{display:block}
+.mega-inner{display:grid;grid-template-columns:1fr 2fr;min-height:380px}
+.left-panel{background:#f7f7f6;border-right:0.5px solid #ebebeb;padding:18px 0}
+.left-label{font-size:10px;font-weight:700;color:#bbb;letter-spacing:0.08em;text-transform:uppercase;padding:0 16px 12px}
+.outcome-item{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;cursor:pointer;font-size:14px;color:#666;border-left:2px solid transparent;transition:all 0.1s;line-height:1.3}
+.outcome-item:hover{color:#46435D;background:#f0efed;border-left-color:#ccc}
+.outcome-item.active{color:#46435D;background:white;border-left-color:#46435D;font-weight:600}
+.outcome-item .arr{font-size:11px;opacity:0;flex-shrink:0;margin-left:8px}
+.outcome-item.active .arr,.outcome-item:hover .arr{opacity:0.5}
+.outcome-item.active .arr{opacity:1}
+.left-divider{border:none;border-top:0.5px solid #ebebeb;margin:10px 0}
+.platform-btn{margin:0 12px 4px;padding:10px 14px;border:0.5px solid #e0e0e0;border-radius:10px;cursor:pointer;text-align:left;background:white;width:calc(100% - 24px);display:block;transition:all 0.12s}
+.platform-btn:hover{border-color:#46435D}
+.platform-btn-label{font-size:12px;font-weight:500;color:#46435D;display:block}
+.platform-btn-sub{font-size:11px;color:#aaa;margin-top:2px;display:block}
+.right-panel{padding:20px 22px;display:flex;flex-direction:column}
+.right-header{font-size:10px;font-weight:700;color:#bbb;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px}
+.outcome-desc{font-size:14px;color:#777;margin-bottom:14px;line-height:1.5;padding-bottom:14px;border-bottom:0.5px solid #f0f0f0}
+.products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.products-grid.all-grid{grid-template-columns:repeat(4,1fr)}
+.product-card{border:0.5px solid #ebebeb;border-radius:12px;padding:14px;cursor:pointer;transition:all 0.12s;background:white;display:flex;flex-direction:column}
+.product-card:hover{border-color:#46435D;transform:translateY(-2px);box-shadow:0 4px 12px rgba(70,67,93,0.1)}
+.product-icon{width:30px;height:30px;border-radius:7px;background:#f0f0f0;margin-bottom:9px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#999}
+.product-name{font-size:13px;font-weight:600;color:#46435D;margin-bottom:3px}
+.product-desc{font-size:11px;color:#aaa;line-height:1.4}
+.right-footer{margin-top:16px;padding-top:12px;border-top:0.5px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between}
+.rf-label{font-size:12px;color:#aaa}
+.rf-link{font-size:12px;color:#46435D;cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:#c0bdd4}
+.simple-panel{padding:20px 24px;min-width:260px}
+.s-section{margin-bottom:16px}
+.s-category{display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 0;margin-bottom:4px}
+.s-cat-icon{width:26px;height:26px;border-radius:6px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.s-cat-label{font-size:14px;font-weight:700;color:#46435D}
+.s-item{font-size:14px;color:#666;padding:7px 0;cursor:pointer;border-bottom:0.5px solid #f5f5f5;transition:color 0.1s;display:block;text-align:center}
+.s-item:hover{color:#46435D}
+.s-item:last-child{border-bottom:none}
 
-  /* SECTION */
-  .section { display: none; padding: 32px; max-width: 1100px; margin: 0 auto; }
-  .section.active { display: block; }
+.w{max-width:1200px;margin:0 auto;padding:0 48px}
+.section{padding:72px 0;background:white;border-bottom:0.5px solid #f0f0f0}
+.section.alt{background:#f7f7f6}
+.section.dark{background:#46435D}
+.section-center{text-align:center;max-width:600px;margin:0 auto 48px}
+.section-eyebrow{font-size:11px;font-weight:700;color:#46435D;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px}
+.section-eyebrow.light{color:rgba(255,255,255,0.5)}
+.section-h2{font-size:32px;font-weight:700;color:#1a1a1a;line-height:1.2;letter-spacing:-0.02em;margin-bottom:12px}
+.section-h2.light{color:white}
+.section-sub{font-size:16px;color:#888;line-height:1.6}
+.section-sub.light{color:rgba(255,255,255,0.6)}
 
-  .sec-title { font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #e4572e; margin-bottom: 6px; }
-  .sec-heading {
-    font-family: 'Playfair Display', serif;
-    font-size: 34px; font-weight: 700; letter-spacing: -0.02em;
-    margin-bottom: 24px; color: #1d1e2c;
-    border-bottom: 2px solid #1d1e2c; padding-bottom: 12px;
-  }
+.hero{background:#46435D;padding:80px 0}
+.hbar{height:9px;background:rgba(255,255,255,0.15);border-radius:3px;margin-bottom:9px}
+.hcard{background:rgba(255,255,255,0.08);border-radius:8px;padding:14px}
+.dark-card{background:rgba(255,255,255,0.08);border-radius:12px;padding:20px;border:0.5px solid rgba(255,255,255,0.1)}
+.dark-card-title{font-size:14px;font-weight:600;color:white;margin-bottom:4px}
+.dark-card-body{font-size:12px;color:rgba(255,255,255,0.5);line-height:1.5}
 
-  /* STAT STRIP */
-  .stat-strip {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 0; margin-bottom: 32px;
-  }
-  .stat-cell { padding: 20px 24px 24px; }
-  .stat-cell .num {
-    font-family: 'Playfair Display', serif;
-    font-size: 56px; font-weight: 700; letter-spacing: -0.03em; line-height: 1;
-    color: #1d1e2c;
-  }
-  .stat-cell .num.accent { color: #e4572e; }
-  .stat-cell .lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #888; margin-top: 10px; }
-  .stat-cell.red .num { color: #e4572e; }
-  .stat-cell.red .lbl { color: #888; }
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 28px;border-radius:999px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;white-space:nowrap}
+.btn-white{background:white;color:#46435D}.btn-white:hover{background:#f0f0f0}
+.btn-ghost{background:transparent;color:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.3)}.btn-ghost:hover{border-color:rgba(255,255,255,0.6);color:white}
+.btn-dark{background:#46435D;color:white}.btn-dark:hover{background:#5a576e}
+.btn-outline{background:transparent;color:#46435D;border:1px solid #c0bdd4}.btn-outline:hover{border-color:#46435D}
+.btn-outline-light{background:transparent;color:white;border:1px solid rgba(255,255,255,0.4)}.btn-outline-light:hover{border-color:white}
 
-  /* CALLOUT */
-  .callout {
-    border-left: 4px solid #e4572e;
-    background: #fff; padding: 14px 18px;
-    margin-bottom: 20px; font-size: 13px; line-height: 1.6;
-  }
-  .callout strong { font-weight: 700; color: #1d1e2c; }
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.card{background:white;border:0.5px solid #e8e8e8;border-radius:16px;padding:28px;transition:all 0.15s;cursor:pointer}
+.card:hover{border-color:#c0bdd4;box-shadow:0 4px 20px rgba(70,67,93,0.08);transform:translateY(-2px)}
+.card.mid{background:#f7f7f6;border-color:#ebebeb}
+.card-icon{width:44px;height:44px;border-radius:10px;background:#eeedf4;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:16px}
+.card-title{font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
+.card-body{font-size:14px;color:#888;line-height:1.6}
 
-  /* GRID */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.tcard{background:white;border:0.5px solid #e8e8e8;border-radius:16px;padding:28px}
+.tquote{font-size:15px;color:#444;line-height:1.7;margin-bottom:20px;font-style:italic}
+.tavatar{width:40px;height:40px;border-radius:50%;background:#e0dfe8;flex-shrink:0}
+.tname{font-size:14px;font-weight:600;color:#1a1a1a}
+.trole{font-size:12px;color:#aaa;margin-top:2px}
 
-  /* CARD */
-  .card { background: #fff; border: 1.5px solid #1d1e2c; padding: 18px; }
-  .card-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #888; margin-bottom: 6px; }
-  .card-accent { border-left: 4px solid #e4572e; }
-  .card h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; margin-bottom: 8px; }
-  .card p { font-size: 13px; line-height: 1.6; color: #333; }
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding:48px 0;border-bottom:0.5px solid #f0f0f0}
+.frow:last-child{border-bottom:none}
+.fimg{background:#e0dfe8;border-radius:12px;height:260px}
+.feyebrow{font-size:11px;font-weight:700;color:#46435D;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px}
+.fh3{font-size:24px;font-weight:700;color:#1a1a1a;margin-bottom:10px;letter-spacing:-0.01em}
+.fbody{font-size:15px;color:#888;line-height:1.7}
 
-  /* BADGE */
-  .badge { display: inline-block; padding: 2px 8px; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: #1d1e2c; color: #fbfcff; margin: 2px; }
-  .badge.red { background: #e4572e; color: #fff; }
-  .badge.outline { background: none; border: 1.5px solid #1d1e2c; color: #1d1e2c; }
+.svc-list{background:white;border-radius:16px;border:0.5px solid #e8e8e8;overflow:hidden}
+.svc-row{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;padding:28px;border-bottom:0.5px solid #f0f0f0}
+.svc-row:last-child{border-bottom:none}
+.svc-icon{width:52px;height:52px;border-radius:12px;background:#eeedf4;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.svc-title{font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
+.svc-body{font-size:14px;color:#888;line-height:1.6}
+.svc-arrow{font-size:20px;color:#c0bdd4}
 
-  /* SECTION LABEL */
-  .sec-rule { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #888; border-top: 2px solid #1d1e2c; padding-top: 14px; margin: 32px 0 16px; }
+.stat-row{display:flex;border-top:0.5px solid #f0f0f0;margin-top:32px;padding-top:32px}
+.stat-item{flex:1;border-right:0.5px solid #f0f0f0;padding:0 24px}
+.stat-item:last-child{border-right:none;padding-right:0}
+.stat-item:first-child{padding-left:0}
+.stat-num{font-size:32px;font-weight:700;color:#46435D;letter-spacing:-0.02em}
+.stat-label{font-size:12px;color:#aaa;margin-top:4px}
 
-  /* TIMELINE */
-  .timeline { position: relative; margin: 8px 0 24px; }
-  .tl-track { position: absolute; left: 110px; top: 0; bottom: 0; width: 4px; background: #1d1e2c; }
-  .tl-item { display: grid; grid-template-columns: 100px 1fr; gap: 20px; align-items: start; margin-bottom: 20px; position: relative; }
-  .tl-date { text-align: right; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; padding-top: 4px; color: #888; }
-  .tl-dot { position: absolute; left: 104px; top: 5px; width: 16px; height: 16px; background: #1d1e2c; border: 3px solid #fbfcff; box-shadow: 0 0 0 2px #1d1e2c; }
-  .tl-dot.red { background: #e4572e; box-shadow: 0 0 0 2px #e4572e; }
-  .tl-content { background: #fff; border: 1.5px solid #1d1e2c; padding: 12px 16px; margin-left: 28px; }
-  .tl-content .phase { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #e4572e; margin-bottom: 2px; }
-  .tl-content .name { font-size: 14px; font-weight: 700; color: #1d1e2c; }
-  .tl-content .note { font-size: 12px; color: #666; margin-top: 4px; }
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.price-card{border-radius:16px;padding:32px;border:0.5px solid #e8e8e8;background:white}
+.price-card.featured{background:#46435D;border-color:#46435D}
+.price-tier{font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#888;margin-bottom:8px}
+.price-tier.light{color:rgba(255,255,255,0.5)}
+.price-amt{font-size:36px;font-weight:700;color:#1a1a1a;letter-spacing:-0.02em;margin-bottom:4px}
+.price-amt.light{color:white}
+.price-period{font-size:13px;color:#aaa;margin-bottom:20px}
+.price-period.light{color:rgba(255,255,255,0.4)}
+.price-feature{font-size:13px;color:#666;padding:7px 0;border-bottom:0.5px solid #f5f5f5;display:flex;align-items:center;gap:8px}
+.price-feature.light{color:rgba(255,255,255,0.65);border-color:rgba(255,255,255,0.1)}
+.pcheck{color:#46435D;font-weight:700;font-size:12px}
+.pcheck.light{color:rgba(255,255,255,0.7)}
 
-  /* TABLE */
-  table.rfp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  table.rfp-table th { background: #1d1e2c; color: #fbfcff; text-align: left; padding: 9px 12px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
-  table.rfp-table td { padding: 9px 12px; border-bottom: 1px solid #e8e9f0; vertical-align: top; color: #444; }
-  table.rfp-table tr:last-child td { border-bottom: none; }
-  table.rfp-table tr:nth-child(even) td { background: #f7f8fc; }
-  table.rfp-table td strong { color: #1d1e2c; font-weight: 600; }
+.page-label{padding:16px 48px;background:#46435D;font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:0.08em;text-transform:uppercase;margin-top:48px;display:flex;align-items:center;gap:12px}
+.page-label::after{content:'';flex:1;height:0.5px;background:rgba(255,255,255,0.2)}
+.page-label::before{content:'';flex:1;height:0.5px;background:rgba(255,255,255,0.2)}
 
-  /* MODULE */
-  .mod-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: #e8e9f0; border: 1px solid #e8e9f0; margin-bottom: 28px; }
-  .mod-item { background: #fbfcff; padding: 20px 18px; border-top: 3px solid transparent; transition: border-color 0.15s; }
-  .mod-item:hover { border-top-color: #e4572e; }
-  .mod-icon { font-size: 18px; margin-bottom: 8px; }
-  .mod-name { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #1d1e2c; margin-bottom: 5px; }
-  .mod-desc { font-size: 12px; color: #888; line-height: 1.5; }
-
-  /* ROLE CARD */
-  .role-card { border: 1.5px solid #1d1e2c; background: #fff; margin-bottom: 0; }
-  .role-header { background: #1d1e2c; color: #fff; padding: 10px 14px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Inter', sans-serif; }
-  .role-header.red { background: #e4572e; }
-  .role-body { padding: 14px; }
-  .role-body li { font-size: 12px; line-height: 1.7; list-style: none; padding-left: 14px; position: relative; color: #444; border-bottom: 1px solid #f0f0f5; padding-bottom: 2px; }
-  .role-body li:last-child { border-bottom: none; }
-  .role-body li::before { content: '—'; position: absolute; left: 0; color: #e4572e; font-weight: 700; }
-
-  /* CHECKLIST */
-  .checklist li { list-style: none; font-size: 13px; line-height: 1.6; padding: 8px 0; border-bottom: 1px solid #e8e9f0; display: flex; align-items: flex-start; gap: 10px; color: #444; }
-  .checklist li:last-child { border-bottom: none; }
-  .chk { width: 15px; height: 15px; border: 1.5px solid #1d1e2c; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; flex-shrink: 0; margin-top: 2px; }
-
-  /* CONTACT */
-  .contact-block { padding: 20px 0; border-top: 1px solid #e8e9f0; }
-  .contact-name { font-size: 15px; font-weight: 600; color: #1d1e2c; margin-bottom: 2px; }
-  .contact-title { font-size: 12px; color: #888; margin-bottom: 5px; }
-  .contact-email { font-size: 13px; color: #e4572e; font-weight: 500; }
-
-  /* CHART */
-  .chart-wrap { position: relative; height: 260px; }
-  .chart-wrap-lg { position: relative; height: 360px; }
-
-  @media (max-width: 720px) {
-    .grid-2, .grid-3 { grid-template-columns: 1fr; }
-    .stat-strip { grid-template-columns: 1fr 1fr; }
-    .stat-cell { border-bottom: 1.5px solid #1d1e2c; }
-    .mod-grid { grid-template-columns: 1fr 1fr; }
-  }
+/* PRODUCT TILE used in solutions grid */
+.prod-tile{background:white;border:0.5px solid #e8e8e8;border-radius:14px;padding:20px;cursor:pointer;transition:all 0.15s;display:flex;flex-direction:column;gap:4px}
+.prod-tile:hover{border-color:#46435D;transform:translateY(-2px);box-shadow:0 4px 20px rgba(70,67,93,0.1)}
+.prod-tile-icon{width:40px;height:40px;border-radius:10px;background:#eeedf4;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:8px}
+.prod-tile-name{font-size:15px;font-weight:700;color:#1a1a1a}
+.prod-tile-desc{font-size:13px;color:#aaa;line-height:1.4}
 </style>
-</head>
-<body>
 
-<!-- GATE -->
-<div id="gate">
-  <div class="g-inner">
-    <div class="g-eyebrow">Confidential Document</div>
-    <h2>JA BizTown 3.0</h2>
-    <p class="g-sub">Enter the access password to continue</p>
-    <input id="pw-input" type="password" placeholder="· · · · · · · ·" onkeydown="if(event.key==='Enter')checkPw()">
-    <div id="pw-error"></div>
-    <button onclick="checkPw()">Unlock →</button>
+<!-- UTILITY BAR -->
+<div class="utility-bar">
+  <div class="util-left">
+    <span class="util-link">Company</span>
+    <span class="util-sep">|</span>
+    <span class="util-link">Healthy Church Hub</span>
+  </div>
+  <div class="util-center">
+    <svg width="32" height="32" viewBox="0 0 32 32"><rect width="16" height="16" fill="#c8c8c8"/><rect x="16" width="16" height="16" fill="#e4e4e4"/><rect y="16" width="16" height="16" fill="#e4e4e4"/><rect x="16" y="16" width="16" height="16" fill="#c8c8c8"/></svg>
+    <span class="logo-wordmark">spired</span>
+  </div>
+  <div class="util-right">
+    <div class="search-field"><span class="search-icon">⌕</span><span class="search-placeholder">Search</span></div>
+    <span class="util-sep">|</span>
+    <span class="util-link">Login</span>
   </div>
 </div>
 
-<!-- HEADER -->
-<div class="rfp-header">
-  <div>
-    <div class="eyebrow">Request for Proposal — Confidential</div>
-    <h1>JA BizTown<br>Simulation 3.0</h1>
-  </div>
-  <div class="meta">
-    <div><strong>Issued</strong> March 13, 2026</div>
-    <div><strong>Proposals Due</strong> April 10, 2026</div>
-    <div><strong>Target Launch</strong> June 2027</div>
-    <div style="margin-top:10px;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#e4572e;font-weight:700;">Junior Achievement USA</div>
-  </div>
-</div>
-
-<!-- NAV -->
-<div class="nav-strip">
-  <button class="active" onclick="show('overview',this)">01 Overview</button>
-  <button onclick="show('schedule',this)">02 Timeline</button>
-  <button onclick="show('simulation',this)">03 Simulation Day</button>
-  <button onclick="show('modules',this)">04 Modules</button>
-  <button onclick="show('roles',this)">05 Roles</button>
-  <button onclick="show('tech',this)">06 Technical</button>
-  <button onclick="show('eval',this)">07 Evaluation</button>
-  <button onclick="show('submit',this)">08 Submit</button>
-</div>
-
-<!-- OVERVIEW -->
-<div id="overview" class="section active">
-  <div class="sec-title">Section 01</div>
-  <div class="sec-heading">Project Overview</div>
-
-  <div class="stat-strip">
-    <div class="stat-cell">
-      <div class="num accent">4.6M</div>
-      <div class="lbl">Students Served Annually</div>
+<!-- NAV - sticky -->
+<div class="nav-stage">
+  <div class="nav-group">
+    <div class="island" id="primaryNav">
+      <button class="nav-btn" onmouseenter="openMenu('who',this)">Who We Serve <span class="chevron">▾</span></button>
+      <button class="nav-btn" onmouseenter="openMenu('solutions',this)">Solutions <span class="chevron">▾</span></button>
+      <button class="nav-btn" onmouseenter="openMenu('services',this)">Services <span class="chevron">▾</span></button>
+      <button class="nav-btn" onmouseenter="closeMenu()">Partners</button>
     </div>
-    <div class="stat-cell">
-      <div class="num">98</div>
-      <div class="lbl">Local JA Areas Nationwide</div>
-    </div>
-    <div class="stat-cell">
-      <div class="num">150</div>
-      <div class="lbl">Students per Simulation Day</div>
-    </div>
-    <div class="stat-cell">
-      <div class="num">4.5hr</div>
-      <div class="lbl">Simulation Duration</div>
-    </div>
-  </div>
-
-  <div class="callout">
-    <strong>The ask:</strong> Build a new elementary/middle school simulation software for a physical, hands-on experience where students operate businesses, manage money, and fulfil civic roles in a simulated town for a day. The new platform replaces the existing system with a modern, tablet-first, real-time experience.
-  </div>
-
-  <div class="grid-2" style="margin-bottom:24px;">
-    <div class="card card-accent">
-      <div class="card-label">What we're building</div>
-      <h3>Core Platform</h3>
-      <p>A unified digital platform supporting a real-economy simulation — banking, payroll, point-of-sale, voting, marketing, and civic engagement — running simultaneously across 80–150 student devices in a physical facility.</p>
-    </div>
-    <div class="card">
-      <div class="card-label">Key Design Principle</div>
-      <h3>Real Feels Real</h3>
-      <p>Tap-to-pay, live dashboards, AI-assisted marketing, digital banking — the UX should mirror tools students will encounter in the real world, but age-appropriate and guided.</p>
-    </div>
-  </div>
-
-  <div class="sec-rule">Economic Model — How the Town Works</div>
-  <div class="grid-3" style="margin-bottom:24px;">
-    <div class="card" style="border-top:4px solid #e4572e;">
-      <div class="card-label">Businesses (14–20)</div>
-      <p>Each storefront has 6–8 student employees. Apply for loans, manage payroll, run POS, serve customers, send/receive B2B invoices.</p>
-    </div>
-    <div class="card" style="border-top:4px solid #1d1e2c;">
-      <div class="card-label">Banking & Finance</div>
-      <p>Students hold personal checking + savings accounts. Debit cards, QR-code payments, NFC tap-to-pay. Real-time balance sync across all devices.</p>
-    </div>
-    <div class="card" style="border-top:4px solid #888;">
-      <div class="card-label">Civic Layer</div>
-      <p>Voting on town issues, tax mechanics, philanthropic scenarios, community leaderboard — students see how decisions affect the whole economy.</p>
-    </div>
-  </div>
-
-  <div class="sec-rule">Learning Objectives</div>
-  <div class="chart-wrap" style="margin-bottom:24px;"><canvas id="objChart"></canvas></div>
-
-  <div class="sec-rule">Delivery Modes</div>
-  <div class="grid-3">
-    <div class="card"><span class="badge">Permanent Facility</span><p style="margin-top:10px;">Full onsite JA BizTown installation in a dedicated physical space.</p></div>
-    <div class="card"><span class="badge">Mobile / Pop-Up</span><p style="margin-top:10px;">Tablet-based "JA BizTown Mobile" deployed in schools, community centres.</p></div>
-    <div class="card"><span class="badge red">Paper Fallback — Required</span><p style="margin-top:10px;">Complete paper-based version for power/internet outages.</p></div>
+    <div class="demo-island"><span class="demo-label">Request Demo</span></div>
+    <div class="mega" id="megaMenu"></div>
   </div>
 </div>
 
-<!-- SCHEDULE -->
-<div id="schedule" class="section">
-  <div class="sec-title">Section 02</div>
-  <div class="sec-heading">Project Timeline</div>
+<!-- ═══════════ HOMEPAGE ═══════════ -->
+<div style="margin-top:24px">
 
-  <div class="callout"><strong>Key deadline:</strong> Beta ready for pilot testing January 2027 — Initial Release June 2027.</div>
-
-  <div class="grid-2" style="margin-bottom:32px;">
-    <div>
-      <div class="sec-rule">Project Milestones</div>
-      <div class="timeline">
-        <div class="tl-track"></div>
-        <div class="tl-item"><div class="tl-date">Mar 2026</div><div class="tl-dot red"></div><div class="tl-content"><div class="phase">RFP Phase</div><div class="name">RFP Distributed</div><div class="note">Questions due Mar 20 · Proposals due Apr 10</div></div></div>
-        <div class="tl-item"><div class="tl-date">Apr 2026</div><div class="tl-dot"></div><div class="tl-content"><div class="phase">Selection</div><div class="name">Vendor Selected</div><div class="note">Interviews Apr 20–24 · Award Apr 27–May 1</div></div></div>
-        <div class="tl-item"><div class="tl-date">May 2026</div><div class="tl-dot red"></div><div class="tl-content"><div class="phase">Kickoff</div><div class="name">Work Begins + Vendor Attends Simulation</div><div class="note">In-person kickoff · Design & dev starts</div></div></div>
-        <div class="tl-item"><div class="tl-date">Sep–Oct 2026</div><div class="tl-dot"></div><div class="tl-content"><div class="phase">Prototype</div><div class="name">Clickable Prototype for User Testing</div><div class="note">Key milestone — real student testing required</div></div></div>
-        <div class="tl-item"><div class="tl-date">Nov–Dec 2026</div><div class="tl-dot"></div><div class="tl-content"><div class="phase">Training</div><div class="name">JA Area Training & Site Prep</div><div class="note">Video trailer training + pilot documents</div></div></div>
-        <div class="tl-item"><div class="tl-date">Jan–Mar 2027</div><div class="tl-dot red"></div><div class="tl-content"><div class="phase">Pilot</div><div class="name">Pilot Release + Testing with JA Areas</div><div class="note">Real student feedback gathered and applied</div></div></div>
-        <div class="tl-item"><div class="tl-date">Mar–Jun 2027</div><div class="tl-dot"></div><div class="tl-content"><div class="phase">Final</div><div class="name">Updates + Final Testing</div><div class="note">Iterate on pilot feedback</div></div></div>
-        <div class="tl-item"><div class="tl-date">Jun 2027</div><div class="tl-dot red"></div><div class="tl-content"><div class="phase">Launch</div><div class="name">Initial Release</div><div class="note">Full training documentation complete</div></div></div>
+  <!-- HERO -->
+  <div class="hero" style="padding:80px 0 0">
+    <div class="w">
+      <div style="text-align:center;margin-bottom:48px">
+        <div style="font-size:38px;font-weight:700;color:white;letter-spacing:-0.02em;line-height:1.1">Dear church leader...</div>
+        <div style="font-size:17px;color:rgba(255,255,255,0.55);margin-top:8px">We see you — and we are here to help.</div>
       </div>
-    </div>
-
-    <div>
-      <div class="sec-rule">RFP Submission Deadlines</div>
-      <table class="rfp-table" style="margin-bottom:24px;">
-        <thead><tr><th>Step</th><th>Date</th></tr></thead>
-        <tbody>
-          <tr><td>Confirm participation</td><td><strong>Mar 18</strong></td></tr>
-          <tr><td>Submit questions</td><td><strong>Mar 20</strong></td></tr>
-          <tr><td>JA answers distributed</td><td><strong>Mar 27</strong></td></tr>
-          <tr><td><strong style="color:#e4572e;">Proposals due</strong></td><td><strong style="color:#e4572e;">Apr 10</strong></td></tr>
-          <tr><td>JA reviews proposals</td><td>Apr 13–17</td></tr>
-          <tr><td>Interviews (if needed)</td><td>Apr 20–24</td></tr>
-          <tr><td>Vendor selected</td><td>Apr 27–May 1</td></tr>
-          <tr><td>MSA negotiated</td><td>May 1–15</td></tr>
-          <tr><td>Work begins</td><td>May 2026</td></tr>
-        </tbody>
-      </table>
-      <div class="callout"><strong>Proposals are irrevocable for 60 days</strong> after submission. Send to <strong>jeannine.reilly@ja.org</strong> and <strong>julian.arias@ja.org</strong></div>
-      <div class="sec-rule">Phase Duration (months)</div>
-      <div class="chart-wrap"><canvas id="ganttChart"></canvas></div>
-    </div>
-  </div>
-</div>
-
-<!-- SIMULATION DAY -->
-<div id="simulation" class="section">
-  <div class="sec-title">Section 03</div>
-  <div class="sec-heading">Simulation Day Schedule</div>
-  <div class="callout">The simulation is a structured 4.5-hour experience led by JA staff. Every phase has defined modules, timing, and learning objectives. The software must advance and track each phase.</div>
-  <div class="stat-strip" style="margin-bottom:24px;">
-    <div class="stat-cell red"><div class="num">4.5hr</div><div class="lbl">Total Duration</div></div>
-    <div class="stat-cell"><div class="num">13</div><div class="lbl">Simulation Phases</div></div>
-    <div class="stat-cell"><div class="num">2</div><div class="lbl">Operations Rounds</div></div>
-    <div class="stat-cell"><div class="num">20+</div><div class="lbl">Volunteers per Day</div></div>
-  </div>
-  <table class="rfp-table">
-    <thead><tr><th>#</th><th>Phase</th><th>Duration</th><th>Key Student Activity</th><th>Modules Required</th></tr></thead>
-    <tbody>
-      <tr><td>1</td><td><strong>Student Arrival & Welcome</strong></td><td>15 min</td><td>Orientation, safety briefing, knowledge check</td><td><span class="badge outline">None</span></td></tr>
-      <tr><td>2</td><td><strong>Opening Town Meeting</strong></td><td>15 min</td><td>Citizens' Pledge, CEO speeches</td><td><span class="badge outline">None</span></td></tr>
-      <tr><td>3</td><td><strong>New Hire Orientation</strong></td><td>30 min</td><td>Team intro, job roles, team building widget</td><td><span class="badge">Surveys</span> <span class="badge">Team Builder</span></td></tr>
-      <tr><td>4</td><td><strong>Trainings</strong></td><td>20 min</td><td>Marketing, leadership, customer service</td><td><span class="badge">Digital Marketing</span></td></tr>
-      <tr><td>5</td><td><strong>Business Opening</strong></td><td>20 min</td><td>Loan application, payroll, set product prices</td><td><span class="badge red">Loan</span> <span class="badge red">Payroll</span> <span class="badge red">POS</span></td></tr>
-      <tr><td>6</td><td><strong>Lunch</strong></td><td>20 min</td><td>Break</td><td><span class="badge outline">None</span></td></tr>
-      <tr><td>7</td><td><strong>Sales Strategy Round 1</strong></td><td>10 min</td><td>CMO leads pricing & goals meeting</td><td><span class="badge">Marketing</span> <span class="badge">POS</span></td></tr>
-      <tr><td>8</td><td><strong>Business Operations Round 1</strong></td><td>30 min</td><td>Sales, B2B, shopping, voting, CEO finalises loan</td><td><span class="badge red">POS</span> <span class="badge red">Banking</span> <span class="badge red">Voting</span></td></tr>
-      <tr><td>9</td><td><strong>Sales Strategy Round 2</strong></td><td>10 min</td><td>Analyse data, pricing adjustment, random scenario</td><td><span class="badge">Marketing</span> <span class="badge red">Scenario</span></td></tr>
-      <tr><td>10</td><td><strong>Business Operations Round 2</strong></td><td>21 min</td><td>Revised strategy, remaining B2B + civic tasks</td><td><span class="badge red">POS</span> <span class="badge red">Banking</span> <span class="badge red">Voting</span></td></tr>
-      <tr><td>11</td><td><strong>Business Debrief</strong></td><td>10 min</td><td>Review performance data, post-survey, summary report</td><td><span class="badge">Banking</span> <span class="badge">Leaderboard</span></td></tr>
-      <tr><td>12</td><td><strong>Business Closing</strong></td><td>5 min</td><td>Clean & reset storefronts</td><td><span class="badge outline">None</span></td></tr>
-      <tr><td>13</td><td><strong>State of the Town</strong></td><td>10 min</td><td>Mayor presents results, awards, leaderboard reveal</td><td><span class="badge">Voting</span> <span class="badge">Leaderboard</span></td></tr>
-    </tbody>
-  </table>
-</div>
-
-<!-- MODULES -->
-<div id="modules" class="section">
-  <div class="sec-title">Section 04</div>
-  <div class="sec-heading">Required Software Modules</div>
-  <div class="callout">Every module below is a hard requirement. The platform must support all simultaneously on a one-device-per-student model with real-time data sync across 80–150 devices.</div>
-  <div class="mod-grid">
-    <div class="mod-item"><div class="mod-icon">💳</div><div class="mod-name">Point of Sale</div><div class="mod-desc">Price per storefront, profit/loss slider vs loan. Real-time transaction recording.</div></div>
-    <div class="mod-item"><div class="mod-icon">📲</div><div class="mod-name">Student Payment</div><div class="mod-desc">QR code per device. Colour-coded shopping break state. Debit card + NFC tap-to-pay.</div></div>
-    <div class="mod-item"><div class="mod-icon">🎨</div><div class="mod-name">Digital Marketing</div><div class="mod-desc">Canva-style tool built in. Share designs across devices, roles, businesses. AI slogan gen.</div></div>
-    <div class="mod-item"><div class="mod-icon">🏦</div><div class="mod-name">Banking System</div><div class="mod-desc">Personal checking + savings. Deposits, withdrawals, real-time balance sync.</div></div>
-    <div class="mod-item"><div class="mod-icon">💰</div><div class="mod-name">Payroll</div><div class="mod-desc">Direct deposit or printed checks. 2nd paycheck as triggered spot bonus.</div></div>
-    <div class="mod-item"><div class="mod-icon">📋</div><div class="mod-name">Loan System</div><div class="mod-desc">CFO applies on shared screen. CEO finalises at bank. Screen-share view for team.</div></div>
-    <div class="mod-item"><div class="mod-icon">📬</div><div class="mod-name">Billing & Bill Pay</div><div class="mod-desc">Send/receive B2B invoices. Transaction tracking. Overdue alerts.</div></div>
-    <div class="mod-item"><div class="mod-icon">🗳️</div><div class="mod-name">Voting</div><div class="mod-desc">Kiosk + mobile Mayor version. Results feed leaderboard and State of the Town.</div></div>
-    <div class="mod-item"><div class="mod-icon">🌪️</div><div class="mod-name">Business Scenarios</div><div class="mod-desc">Randomised ethical dilemmas. CEO decides. XP gain/loss reflects community impact.</div></div>
-    <div class="mod-item"><div class="mod-icon">🏆</div><div class="mod-name">Leaderboard (XP)</div><div class="mod-desc">Live, large-screen ready. Loan speed, profit, donations, surveys, voting all score.</div></div>
-    <div class="mod-item"><div class="mod-icon">📊</div><div class="mod-name">Business Dashboard</div><div class="mod-desc">P&L, profit calculator, competitor pricing, loan status, pie charts + bar graphs.</div></div>
-    <div class="mod-item"><div class="mod-icon">📻</div><div class="mod-name">Radio Business</div><div class="mod-desc">Integrated with facility A/V. Auto-imports slogans for DJ to broadcast on-air.</div></div>
-    <div class="mod-item"><div class="mod-icon">📝</div><div class="mod-name">Surveys & Evaluation</div><div class="mod-desc">Pre + post. 4–6 locked national questions. Areas add up to 6. Min 10 items, 125-char prompts.</div></div>
-    <div class="mod-item"><div class="mod-icon">🤝</div><div class="mod-name">Team Building Widget</div><div class="mod-desc">One-device-per-user real-time collaboration. Each input visibly contributes to shared output.</div></div>
-    <div class="mod-item"><div class="mod-icon">🤖</div><div class="mod-name">AI Features</div><div class="mod-desc">Slogan generation for marketing. CEO speech transcription via voice-to-text.</div></div>
-  </div>
-  <div class="sec-rule">Module Complexity vs. Business Impact</div>
-  <div class="chart-wrap-lg"><canvas id="moduleChart"></canvas></div>
-</div>
-
-<!-- ROLES -->
-<div id="roles" class="section">
-  <div class="sec-title">Section 05</div>
-  <div class="sec-heading">Audience Roles & Requirements</div>
-  <div class="sec-rule">Role Composition per Simulation Day</div>
-  <div class="chart-wrap" style="margin-bottom:32px;"><canvas id="rolesChart"></canvas></div>
-  <div class="grid-2" style="margin-bottom:20px;">
-    <div class="role-card">
-      <div class="role-header red">Students — Primary Users</div>
-      <div class="role-body"><ul>
-        <li>Grades 5–6, ages 9–12</li>
-        <li>One device per student (tablet)</li>
-        <li>Roles: CEO, CFO, CMO, general employees</li>
-        <li>Apply for loans, submit payroll, vote, shop</li>
-        <li>Auth: QR code or PIN — not device-bound</li>
-        <li>English + Spanish UI at minimum</li>
-      </ul></div>
-    </div>
-    <div class="role-card">
-      <div class="role-header">Simulation Manager</div>
-      <div class="role-body"><ul>
-        <li>Full-time JA staff, leads entire day on mic</li>
-        <li>Centralised dashboard: real-time town status</li>
-        <li>Push/pause simulation phases from laptop</li>
-        <li>Reverse transactions, reissue paychecks, move students remotely</li>
-        <li>Award XP and subsidies to businesses</li>
-        <li>Trigger activities (voting, scenarios, payroll)</li>
-      </ul></div>
-    </div>
-    <div class="role-card">
-      <div class="role-header">Volunteers</div>
-      <div class="role-body"><ul>
-        <li>Corporate, parent, or community volunteers</li>
-        <li>Tablet dashboard: P&L, student progress, loan status</li>
-        <li>Integrated guide with discussion prompts</li>
-        <li>Clear indicators for when + why to intervene</li>
-        <li>End-of-day feedback survey</li>
-      </ul></div>
-    </div>
-    <div class="role-card">
-      <div class="role-header">Teachers</div>
-      <div class="role-body"><ul>
-        <li>Deliver 12 pre-sim lessons before simulation day</li>
-        <li>Monitor behaviour and engagement day-of</li>
-        <li>End-of-day reports via QR code or simple login</li>
-        <li>Individual student, business, and full simulation reports</li>
-        <li>May serve as improvised volunteer if needed</li>
-      </ul></div>
-    </div>
-  </div>
-  <div class="sec-rule">CMS Admin Roles</div>
-  <div class="grid-3">
-    <div class="card card-accent">
-      <div class="card-label" style="color:#e4572e;">Super Admin — National</div>
-      <p>JA USA. Sets master templates, locks evaluation questions, pushes updates to all JA Areas without overwriting local customisation.</p>
-    </div>
-    <div class="card">
-      <div class="card-label">Local Admin</div>
-      <p>Per JA Area. Customises businesses, sponsors, logos, payroll rates, tax rates, loan terms. Restricted to assigned facilities only.</p>
-    </div>
-    <div class="card">
-      <div class="card-label">Simulation Manager</div>
-      <p>Day-of setup and activation. Creates templates, adjusts timing, enables/disables modules, makes real-time CMS changes during live sim.</p>
-    </div>
-  </div>
-</div>
-
-<!-- TECH -->
-<div id="tech" class="section">
-  <div class="sec-title">Section 06</div>
-  <div class="sec-heading">Technical Requirements</div>
-  <div class="callout">JA USA will own, host, and manage the platform on Microsoft Azure. Deviations from the preferred stack are acceptable if the vendor can demonstrate equivalent capability.</div>
-  <div class="grid-2" style="margin-bottom:24px;">
-    <div>
-      <div class="sec-rule">Preferred Tech Stack</div>
-      <table class="rfp-table">
-        <thead><tr><th>Layer</th><th>Technology</th></tr></thead>
-        <tbody>
-          <tr><td>Cloud</td><td><strong>Microsoft Azure</strong></td></tr>
-          <tr><td>Database</td><td><strong>SQL Server</strong> — stored procedures</td></tr>
-          <tr><td>Backend</td><td><strong>C# .NET Core 8/9</strong> — microservices</td></tr>
-          <tr><td>Frontend</td><td><strong>React Native</strong> — SPA, mobile-first</td></tr>
-          <tr><td>Mobile Deploy</td><td><strong>Expo.dev</strong> — iOS + Android + web</td></tr>
-          <tr><td>Source Control</td><td><strong>Azure DevOps / Git</strong> (Gitflow)</td></tr>
-          <tr><td>Auth (students)</td><td>QR code or PIN — not device-bound</td></tr>
-          <tr><td>Auth (staff)</td><td><strong>Microsoft Entra B2C</strong> + OpenID</td></tr>
-          <tr><td>Reporting</td><td><strong>Power BI</strong> + Azure App Insights</td></tr>
-          <tr><td>Containers</td><td>Docker — consistent dev/test/prod envs</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div>
-      <div class="sec-rule">Scalability</div>
-      <div class="chart-wrap" style="margin-bottom:20px;"><canvas id="scaleChart"></canvas></div>
-      <div class="stat-strip" style="margin-bottom:0;grid-template-columns:1fr 1fr;">
-        <div class="stat-cell"><div class="num accent">5K</div><div class="lbl">Concurrent Users</div></div>
-        <div class="stat-cell"><div class="num">600K</div><div class="lbl">Students / School Year</div></div>
+      <div style="text-align:center;max-width:760px;margin:0 auto 48px">
+        <div style="font-size:48px;font-weight:700;color:white;letter-spacing:-0.025em;line-height:1.08;margin-bottom:16px">Run your church.<br>Not the other way around.</div>
+        <div style="font-size:17px;color:rgba(255,255,255,0.6);line-height:1.65">One platform to manage people, giving, worship, communications, and operations — built for churches that want to thrive.</div>
+      </div>
+      <div style="max-width:820px;margin:0 auto;background:rgba(255,255,255,0.07);border-radius:16px 16px 0 0;border:0.5px solid rgba(255,255,255,0.12);border-bottom:none;padding:48px 0;display:flex;align-items:center;justify-content:center;min-height:320px">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:14px">
+          <div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:24px;color:white;border:0.5px solid rgba(255,255,255,0.2)">▶</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.35);letter-spacing:0.06em;text-transform:uppercase;font-weight:600">Watch the overview</div>
+        </div>
       </div>
     </div>
   </div>
-  <div class="sec-rule">Non-Negotiable Requirements</div>
-  <div class="grid-3">
-    <div class="card" style="border-top:4px solid #e4572e;"><div class="card-label" style="color:#e4572e;">Accessibility</div><p><strong>WCAG 2.2 AA</strong> compliance mandatory. VPAT required per section. English + Spanish minimum.</p></div>
-    <div class="card" style="border-top:4px solid #e4572e;"><div class="card-label" style="color:#e4572e;">Real-Time Sync</div><p>Every transaction must update simultaneously across student, business, and bank accounts — no lag.</p></div>
-    <div class="card" style="border-top:4px solid #e4572e;"><div class="card-label" style="color:#e4572e;">Security</div><p>IETF, OWASP, W3C standards. PII protected. Data encrypted. Full audit logging.</p></div>
-    <div class="card"><div class="card-label">Agile / Scrum</div><p>Standard sprint cadence with standups, planning, refinement, retros, and demos. Work items in Azure DevOps.</p></div>
-    <div class="card"><div class="card-label">Paper Fallback</div><p>Complete paper-based version required for outage scenarios. CMS generates as PDFs automatically.</p></div>
-    <div class="card"><div class="card-label">Localisation</div><p>XLF files for English + Spanish. Browser translation accessible. Expandable containers for character variation.</p></div>
-  </div>
-</div>
 
-<!-- EVAL -->
-<div id="eval" class="section">
-  <div class="sec-title">Section 07</div>
-  <div class="sec-heading">Evaluation Criteria</div>
-  <div class="callout">JA will score proposals across six dimensions. All submissions must use the JA-provided template. Incomplete proposals may be disqualified.</div>
-  <div class="grid-2" style="margin-bottom:32px;">
-    <div>
-      <div class="sec-rule">Scoring Dimensions</div>
-      <div class="chart-wrap-lg"><canvas id="evalChart"></canvas></div>
-    </div>
-    <div>
-      <div class="sec-rule">What JA Is Looking For</div>
-      <div class="role-card" style="margin-bottom:16px;">
-        <div class="role-header red">Design Evaluation — Key Signals</div>
-        <div class="role-body"><ul>
-          <li>Evidence of designing for kids ages 9–12</li>
-          <li>Role-specific UI — CEO/CFO/CMO feel distinct</li>
-          <li>Animation that teaches, not just decorates</li>
-          <li>Decisions + flows shown in wires before full design</li>
-          <li>Examples of educational platforms for this age group</li>
-          <li>Realistic project planning — no wishful timelines</li>
-          <li>Ability to collaborate with in-house design team</li>
-        </ul></div>
-      </div>
-      <div class="role-card">
-        <div class="role-header">Eligible Applicants</div>
-        <div class="role-body"><ul>
-          <li>US-based companies only</li>
-          <li>6-figure cross-platform mobile dev experience</li>
-          <li>.NET framework architecture required</li>
-          <li>CMS creation/implementation required</li>
-          <li>UX, UI, visual + interaction design in-house</li>
-          <li>Educational solution experience desirable</li>
-        </ul></div>
+  <!-- DEMO CTA STRIP -->
+  <div style="background:white;border-bottom:0.5px solid #f0f0f0">
+    <div class="w">
+      <div style="max-width:820px;margin:0 auto;background:white;border-radius:0 0 16px 16px;border:0.5px solid #e8e8e8;border-top:none;padding:24px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px">
+        <div>
+          <div style="font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:3px">Ready to see it for yourself?</div>
+          <div style="font-size:13px;color:#aaa">Book a personalized demo — we'll walk through exactly what Amplify looks like for your church.</div>
+        </div>
+        <div style="display:flex;gap:10px;flex-shrink:0">
+          <button class="btn btn-dark">Book a Demo</button>
+          <button class="btn btn-outline">Learn More</button>
+        </div>
       </div>
     </div>
   </div>
-  <div class="sec-rule">Required Proposal Sections</div>
-  <table class="rfp-table">
-    <thead><tr><th>#</th><th>Section</th><th>What to Include</th></tr></thead>
-    <tbody>
-      <tr><td>1</td><td><strong>Executive Overview</strong></td><td>Company info, ownership, team size, 3 comparable project references with client contacts</td></tr>
-      <tr><td>2</td><td><strong>Staffing</strong></td><td>Engagement team, key staff resumes, staffing strategy</td></tr>
-      <tr><td>3</td><td><strong>Approach</strong></td><td>UX/design process, dev process, QA, PM, source control, training, ongoing support costs, warranties</td></tr>
-      <tr><td>4</td><td><strong>Design Evaluation</strong></td><td>Portfolio evidence, kids' educational platform examples, wireframing approach, animation examples</td></tr>
-      <tr><td>5</td><td><strong>Schedule</strong></td><td>Milestone plan with risk mitigation for delays</td></tr>
-      <tr><td>6</td><td><strong>Cost / Fees</strong></td><td>Staff roles + hourly rates + total cost range estimate</td></tr>
-    </tbody>
-  </table>
-</div>
 
-<!-- SUBMIT -->
-<div id="submit" class="section">
-  <div class="sec-title">Section 08</div>
-  <div class="sec-heading">How to Submit</div>
-  <div class="grid-2">
-    <div>
-      <div class="callout">Email all submissions and questions to both contacts. Subject line for questions: <strong>JABT 3.0 RFP Questions</strong></div>
-      <div class="sec-rule">Primary Contacts</div>
-      <div class="contact-block">
-        <div class="contact-name">Jeannine Reilly</div>
-        <div class="contact-title">VP, Education Delivery and Technology Solutions</div>
-        <div class="contact-email">jeannine.reilly@ja.org</div>
-      </div>
-      <div class="contact-block">
-        <div class="contact-name">Julian Arias</div>
-        <div class="contact-title">Associate VP – Experiential Learning Centers</div>
-        <div class="contact-email">julian.arias@ja.org</div>
-      </div>
-      <div class="contact-block" style="padding-bottom:0;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#888;margin-bottom:4px;">Address</div>
-        <div style="font-size:13px;color:#555;line-height:1.8;">Junior Achievement USA<br>12320 Oracle Blvd., Ste 310<br>Colorado Springs, CO 80921</div>
+  <!-- LOGO STRIP -->
+  <div class="section" style="padding:28px 0">
+    <div class="w">
+      <div style="font-size:12px;color:#bbb;text-align:center;margin-bottom:16px;letter-spacing:0.04em">Trusted by 55,000+ ministries across North America</div>
+      <div style="display:flex;align-items:center;justify-content:center">
+        <div style="height:20px;border-radius:3px;background:#e8e8e8;margin:0 20px;width:110px"></div>
+        <div style="height:20px;border-radius:3px;background:#e8e8e8;margin:0 20px;width:90px"></div>
+        <div style="height:20px;border-radius:3px;background:#e8e8e8;margin:0 20px;width:130px"></div>
+        <div style="height:20px;border-radius:3px;background:#e8e8e8;margin:0 20px;width:100px"></div>
+        <div style="height:20px;border-radius:3px;background:#e8e8e8;margin:0 20px;width:120px"></div>
+        <div style="height:20px;border-radius:3px;background:#e8e8e8;margin:0 20px;width:95px"></div>
       </div>
     </div>
-    <div>
-      <div class="sec-rule">Submission Checklist</div>
-      <ul class="checklist">
-        <li><span class="chk">✓</span> Confirm participation by Mar 18</li>
-        <li><span class="chk">✓</span> Submit questions as numbered list by Mar 20</li>
-        <li><span class="chk">✓</span> Use JA-provided proposal template</li>
-        <li><span class="chk">✓</span> Include Executive Overview with 3 references</li>
-        <li><span class="chk">✓</span> Include key staff resumes</li>
-        <li><span class="chk">✓</span> Include UX/design process + portfolio examples</li>
-        <li><span class="chk">✓</span> Include milestone schedule with risk mitigation</li>
-        <li><span class="chk">✓</span> Include itemised cost estimate</li>
-        <li><span class="chk">✓</span> Submit electronically by <strong style="color:#e4572e;">April 10, 2026</strong></li>
-      </ul>
-      <div style="margin-top:28px;">
-        <div class="sec-rule">Important Notices</div>
-        <div class="card" style="border-left:4px solid #e4572e;margin-bottom:12px;"><p><strong>Ownership:</strong> All draft and final materials are the sole property of Junior Achievement USA.</p></div>
-        <div class="card" style="border-left:4px solid #1d1e2c;"><p><strong>No exclusivity:</strong> JA may contract with more than one party and reserves the right to reject any or all proposals.</p></div>
+  </div>
+
+  <!-- PILLARS -->
+  <div class="section" style="padding-top:80px;padding-bottom:0">
+    <div class="w">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;margin-bottom:48px">
+        <div>
+          <div class="section-eyebrow">Our foundation</div>
+          <div style="font-size:40px;font-weight:700;color:#1a1a1a;line-height:1.1;letter-spacing:-0.025em">Church Management Software Built to Help Churches Thrive</div>
+        </div>
+        <div style="padding-top:48px">
+          <div style="font-size:16px;color:#888;line-height:1.7">Amplify is a church management platform designed to empower 5 key pillars of a healthy church. Together, these pillars create shared experiences, strengthen connections, streamline processes, and establish a secure environment for worship — fostering a thriving community.</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:0 48px">
+      <div style="background:#e0dfe8;aspect-ratio:2/3;border-radius:10px"></div>
+      <div style="background:#d4d2de;aspect-ratio:2/3;border-radius:10px"></div>
+      <div style="background:#cccad8;aspect-ratio:2/3;border-radius:10px"></div>
+      <div style="background:#d4d2de;aspect-ratio:2/3;border-radius:10px"></div>
+      <div style="background:#e0dfe8;aspect-ratio:2/3;border-radius:10px"></div>
+    </div>
+    <div class="w">
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:32px 0 80px">
+        <div style="padding:0 8px"><div style="font-size:10px;font-weight:700;color:#bbb;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">Pillar 1</div><div style="font-size:16px;font-weight:700;color:#46435D;margin-bottom:8px;line-height:1.2">Community & Discipleship</div><div style="font-size:13px;color:#aaa;line-height:1.6">By investing in the spiritual growth of its members, the church can create a culture of discipleship that transforms lives.</div></div>
+        <div style="padding:0 8px"><div style="font-size:10px;font-weight:700;color:#bbb;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">Pillar 2</div><div style="font-size:16px;font-weight:700;color:#46435D;margin-bottom:8px;line-height:1.2">Communication & Engagement</div><div style="font-size:13px;color:#aaa;line-height:1.6">Communication creates a sense of community and fosters a culture of trust, inclusion, and respect.</div></div>
+        <div style="padding:0 8px"><div style="font-size:10px;font-weight:700;color:#bbb;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">Pillar 3</div><div style="font-size:16px;font-weight:700;color:#46435D;margin-bottom:8px;line-height:1.2">Financial Stewardship</div><div style="font-size:13px;color:#aaa;line-height:1.6">Build a culture of transparency and accountability, ensuring church funds are managed appropriately.</div></div>
+        <div style="padding:0 8px"><div style="font-size:10px;font-weight:700;color:#bbb;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">Pillar 4</div><div style="font-size:16px;font-weight:700;color:#46435D;margin-bottom:8px;line-height:1.2">Staff & Volunteer Effectiveness</div><div style="font-size:13px;color:#aaa;line-height:1.6">Equip your team with the resources to carry out their roles effectively and without burnout.</div></div>
+        <div style="padding:0 8px"><div style="font-size:10px;font-weight:700;color:#bbb;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">Pillar 5</div><div style="font-size:16px;font-weight:700;color:#46435D;margin-bottom:8px;line-height:1.2">Safe Environments</div><div style="font-size:13px;color:#aaa;line-height:1.6">Keep people safe with tools from background checks to real-time monitoring and secure check-in.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="section alt">
+    <div class="w">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center">
+        <div>
+          <div class="section-eyebrow">How it works</div>
+          <div class="section-h2" style="margin-bottom:16px">One platform. End-to-end.</div>
+          <div class="section-sub" style="margin-bottom:32px">Amplify replaces the patchwork of disconnected tools with a single system your whole team can rely on — from check-in to giving reports.</div>
+          <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:32px">
+            <div style="display:flex;align-items:flex-start;gap:14px"><div style="width:30px;height:30px;border-radius:50%;background:#eeedf4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#46435D;flex-shrink:0">1</div><div><div style="font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:3px">Connect your data</div><div style="font-size:14px;color:#aaa;line-height:1.5">People, giving, attendance — all in one place, updated in real time.</div></div></div>
+            <div style="display:flex;align-items:flex-start;gap:14px"><div style="width:30px;height:30px;border-radius:50%;background:#eeedf4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#46435D;flex-shrink:0">2</div><div><div style="font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:3px">Empower your team</div><div style="font-size:14px;color:#aaa;line-height:1.5">Role-based dashboards so everyone sees exactly what they need.</div></div></div>
+            <div style="display:flex;align-items:flex-start;gap:14px"><div style="width:30px;height:30px;border-radius:50%;background:#eeedf4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#46435D;flex-shrink:0">3</div><div><div style="font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:3px">Make better decisions</div><div style="font-size:14px;color:#aaa;line-height:1.5">Data-informed insights so you lead proactively, not reactively.</div></div></div>
+          </div>
+          <button class="btn btn-dark">See a Live Demo</button>
+        </div>
+        <div style="background:#e0dfe8;border-radius:14px;height:360px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASSESSMENT CALLOUT -->
+  <div class="section">
+    <div class="w">
+      <div style="background:#eeedf4;border-radius:16px;padding:40px 48px;display:flex;align-items:center;justify-content:space-between;gap:32px">
+        <div><div style="font-size:22px;font-weight:700;color:#46435D;margin-bottom:8px">Not sure where to start?</div><div style="font-size:15px;color:#777;line-height:1.6;max-width:480px">Take our free Healthy Church Assessment and get a personalized report on where your church has the biggest opportunities to grow.</div></div>
+        <button class="btn btn-dark" style="flex-shrink:0">Take the Assessment →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS -->
+  <div class="section alt">
+    <div class="w">
+      <div class="section-center">
+        <div class="section-eyebrow">What churches say</div>
+        <div class="section-h2">Built by church leaders, for church leaders</div>
+      </div>
+      <div class="grid-3">
+        <div class="tcard"><div class="tquote">"We went from three disconnected systems to one. Our admin time dropped by 40% in the first month."</div><div style="display:flex;align-items:center;gap:12px"><div class="tavatar"></div><div><div class="tname">Pastor David R.</div><div class="trole">Executive Pastor · 800-member church</div></div></div></div>
+        <div class="tcard"><div class="tquote">"Volunteer scheduling used to take me half a day. Now it's automated. My team actually shows up prepared."</div><div style="display:flex;align-items:center;gap:12px"><div class="tavatar"></div><div><div class="tname">Sarah M.</div><div class="trole">Worship Pastor · Multi-site church</div></div></div></div>
+        <div class="tcard"><div class="tquote">"Our giving increased 22% after switching. Easier for donors, easier for our team to track and report on."</div><div style="display:flex;align-items:center;gap:12px"><div class="tavatar"></div><div><div class="tname">James T.</div><div class="trole">Finance Treasurer · Growing congregation</div></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEALTHY CHURCH HUB -->
+  <div class="section">
+    <div class="w">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px">
+        <div>
+          <div class="section-eyebrow">Healthy Church Hub</div>
+          <div class="section-h2" style="margin-bottom:8px">Resources to help your church thrive</div>
+          <div class="section-sub" style="max-width:480px">Guides, webinars, podcasts, and research — curated for church leaders navigating real challenges.</div>
+        </div>
+        <button class="btn btn-outline" style="flex-shrink:0;margin-bottom:4px">Explore the Hub →</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:24px">
+        <div style="padding:6px 16px;border-radius:999px;background:#46435D;color:white;font-size:12px;font-weight:600;cursor:pointer">Webinars</div>
+        <div style="padding:6px 16px;border-radius:999px;background:white;border:0.5px solid #e0e0e0;color:#666;font-size:12px;font-weight:500;cursor:pointer">eBooks</div>
+        <div style="padding:6px 16px;border-radius:999px;background:white;border:0.5px solid #e0e0e0;color:#666;font-size:12px;font-weight:500;cursor:pointer">Podcasts</div>
+        <div style="padding:6px 16px;border-radius:999px;background:white;border:0.5px solid #e0e0e0;color:#666;font-size:12px;font-weight:500;cursor:pointer">Blog</div>
+      </div>
+      <div class="grid-4">
+        <div class="card" style="padding:0;overflow:hidden"><div style="background:#d4d2de;height:140px;display:flex;align-items:center;justify-content:center"><div style="width:40px;height:40px;border-radius:50%;background:rgba(70,67,93,0.3);display:flex;align-items:center;justify-content:center;font-size:14px;color:white">▶</div></div><div style="padding:16px"><div style="font-size:10px;font-weight:700;color:#bbb;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">Webinar</div><div style="font-size:14px;font-weight:600;color:#1a1a1a;line-height:1.3;margin-bottom:8px">How to Build a Culture of Generosity in Your Church</div><div style="font-size:12px;color:#aaa">45 min · On demand</div></div></div>
+        <div class="card" style="padding:0;overflow:hidden"><div style="background:#e0dfe8;height:140px;display:flex;align-items:center;justify-content:center"><div style="width:56px;height:72px;background:white;border-radius:4px;box-shadow:2px 2px 8px rgba(0,0,0,0.1)"></div></div><div style="padding:16px"><div style="font-size:10px;font-weight:700;color:#bbb;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">eBook</div><div style="font-size:14px;font-weight:600;color:#1a1a1a;line-height:1.3;margin-bottom:8px">The 2026 Annual Church Giving Report</div><div style="font-size:12px;color:#aaa">Free download · 24 pages</div></div></div>
+        <div class="card" style="padding:0;overflow:hidden"><div style="background:#cccad8;height:140px;display:flex;align-items:center;justify-content:center"><div style="width:48px;height:48px;border-radius:10px;background:rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-size:22px">🎙</div></div><div style="padding:16px"><div style="font-size:10px;font-weight:700;color:#bbb;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">Podcast</div><div style="font-size:14px;font-weight:600;color:#1a1a1a;line-height:1.3;margin-bottom:8px">Leading Through Change: Lessons from 5 Senior Pastors</div><div style="font-size:12px;color:#aaa">Ep. 42 · 38 min</div></div></div>
+        <div class="card" style="padding:0;overflow:hidden"><div style="background:#d8d6e4;height:140px;display:flex;align-items:flex-end;padding:16px"><div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:0.06em;text-transform:uppercase">Featured post</div></div><div style="padding:16px"><div style="font-size:10px;font-weight:700;color:#bbb;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">Blog</div><div style="font-size:14px;font-weight:600;color:#1a1a1a;line-height:1.3;margin-bottom:8px">5 Signs Your Church Tech Stack Is Holding You Back</div><div style="font-size:12px;color:#aaa">6 min read</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINAL CTA -->
+  <div class="section dark">
+    <div class="w" style="text-align:center">
+      <div style="font-size:38px;font-weight:700;color:white;letter-spacing:-0.02em;margin-bottom:12px">Ready to see Amplify in action?</div>
+      <div style="font-size:16px;color:rgba(255,255,255,0.6);margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto">Join 55,000+ ministries already running on Amplify. Book a personalized demo with our team.</div>
+      <div style="display:flex;gap:12px;justify-content:center">
+        <button class="btn btn-white">Book a Demo</button>
+        <button class="btn btn-ghost">Talk to Sales</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ PLATFORM OVERVIEW ═══════════ -->
+<div class="page-label">Page Template — Platform Overview</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="w" style="text-align:center">
+    <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px">Platform Overview</div>
+    <div style="font-size:48px;font-weight:700;color:white;letter-spacing:-0.025em;line-height:1.08;margin-bottom:16px;max-width:720px;margin-left:auto;margin-right:auto">One platform. Every tool your church needs.</div>
+    <div style="font-size:17px;color:rgba(255,255,255,0.6);line-height:1.65;max-width:560px;margin:0 auto 32px">Amplify is an end-to-end church management system — not a bundle of separate products, but a single connected platform built to work together.</div>
+    <div style="display:flex;gap:12px;justify-content:center">
+      <button class="btn btn-white">Book a Demo</button>
+      <button class="btn btn-ghost">See Pricing</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT GRID — clickable tiles -->
+<div class="section">
+  <div class="w">
+    <div class="section-center">
+      <div class="section-eyebrow">What's included</div>
+      <div class="section-h2">Ten tools. One login. Zero silos.</div>
+      <div class="section-sub">Every product in Amplify shares the same data layer — so your people records, giving history, and communications are always in sync.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+      <div class="prod-tile"><div class="prod-tile-icon">$</div><div class="prod-tile-name">Giving</div><div class="prod-tile-desc">Online, text & recurring giving</div></div>
+      <div class="prod-tile"><div class="prod-tile-icon">=</div><div class="prod-tile-name">Accounting</div><div class="prod-tile-desc">Fund accounting built for churches</div></div>
+      <div class="prod-tile"><div class="prod-tile-icon">👥</div><div class="prod-tile-name">People (ChMS)</div><div class="prod-tile-desc">Member records & group management</div></div>
+      <div class="prod-tile"><div class="prod-tile-icon">🌐</div><div class="prod-tile-name">Websites</div><div class="prod-tile-desc">Your digital front door</div></div>
+      <div class="prod-tile"><div class="prod-tile-icon">📱</div><div class="prod-tile-name">Mobile App</div><div class="prod-tile-desc">Church in their pocket</div></div>
+      <div class="prod-tile"><div class="prod-tile-icon">📣</div><div class="prod-tile-name">Communications</div><div class="prod-tile-desc">Email, text & push notifications</div></div>
+      <div class="prod-tile"><div class="prod-tile-icon">▶</div><div class="prod-tile-name">Streaming</div><div class="prod-tile-desc">Live & on-demand services</div></div>
+      <div class="prod-tile"><div class="prod-tile-icon">✓</div><div class="prod-tile-name">Service Planning</div><div class="prod-tile-desc">Plan & coordinate every service</div></div>
+      <div class="prod-tile"><div class="prod-tile-icon">◉</div><div class="prod-tile-name">Media</div><div class="prod-tile-desc">Sermon content & distribution</div></div>
+      <div class="prod-tile"><div class="prod-tile-icon">🛡</div><div class="prod-tile-name">Safety</div><div class="prod-tile-desc">Check-in, background checks & protocols</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS DEMO -->
+<div class="section alt">
+  <div class="w">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center">
+      <div>
+        <div class="section-eyebrow">How it works</div>
+        <div class="section-h2" style="margin-bottom:16px">Built to work together, not just alongside each other</div>
+        <div class="section-sub" style="margin-bottom:32px">Most church software stacks are disconnected tools that happen to share a login. Amplify is different — every module shares one data layer, so actions in one area automatically update across the platform.</div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:flex-start;gap:14px"><div style="width:30px;height:30px;border-radius:50%;background:#eeedf4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#46435D;flex-shrink:0">1</div><div><div style="font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:3px">One unified database</div><div style="font-size:14px;color:#aaa;line-height:1.5">Every person, gift, and interaction lives in one place — no syncing required.</div></div></div>
+          <div style="display:flex;align-items:flex-start;gap:14px"><div style="width:30px;height:30px;border-radius:50%;background:#eeedf4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#46435D;flex-shrink:0">2</div><div><div style="font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:3px">Role-based access</div><div style="font-size:14px;color:#aaa;line-height:1.5">Each team member sees exactly what they need — nothing more, nothing less.</div></div></div>
+          <div style="display:flex;align-items:flex-start;gap:14px"><div style="width:30px;height:30px;border-radius:50%;background:#eeedf4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#46435D;flex-shrink:0">3</div><div><div style="font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:3px">Real-time reporting</div><div style="font-size:14px;color:#aaa;line-height:1.5">Attendance, giving, volunteer data — always current, always actionable.</div></div></div>
+        </div>
+      </div>
+      <div style="background:#e0dfe8;border-radius:14px;height:380px;display:flex;align-items:center;justify-content:center">
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(70,67,93,0.15);display:flex;align-items:center;justify-content:center;font-size:22px;color:#46435D">▶</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ASSESSMENT CALLOUT -->
+<div class="section">
+  <div class="w">
+    <div style="background:#eeedf4;border-radius:16px;padding:40px 48px;display:flex;align-items:center;justify-content:space-between;gap:32px">
+      <div><div style="font-size:22px;font-weight:700;color:#46435D;margin-bottom:8px">Curious how your church stacks up?</div><div style="font-size:15px;color:#777;line-height:1.6;max-width:480px">Our Healthy Church Assessment benchmarks your church across all five pillars and tells you exactly where Amplify can help the most.</div></div>
+      <button class="btn btn-dark" style="flex-shrink:0">Take the Assessment →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="section alt">
+  <div class="w">
+    <div class="section-center">
+      <div class="section-eyebrow">Highlighted testimonials</div>
+      <div class="section-h2">What church leaders are saying</div>
+    </div>
+    <div class="grid-2">
+      <div class="tcard" style="background:#46435D;border-color:#46435D"><div class="tquote" style="color:rgba(255,255,255,0.75);font-size:18px;line-height:1.6">"Amplify didn't just replace our old system — it changed how we think about ministry operations entirely."</div><div style="display:flex;align-items:center;gap:12px"><div class="tavatar"></div><div><div class="tname" style="color:white">Pastor Mark J.</div><div class="trole" style="color:rgba(255,255,255,0.5)">Executive Pastor · 2,400-member church</div></div></div></div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="tcard"><div class="tquote" style="font-size:14px">"The giving-accounting sync alone saved our treasurer 6 hours a week."</div><div style="display:flex;align-items:center;gap:10px"><div class="tavatar" style="width:32px;height:32px"></div><div><div class="tname" style="font-size:13px">Rachel W.</div><div class="trole">Church Administrator</div></div></div></div>
+        <div class="tcard"><div class="tquote" style="font-size:14px">"Our volunteers actually show up now — because they get reminded automatically and can confirm from their phone."</div><div style="display:flex;align-items:center;gap:10px"><div class="tavatar" style="width:32px;height:32px"></div><div><div class="tname" style="font-size:13px">Tim B.</div><div class="trole">Worship Pastor</div></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO CTA -->
+<div class="section dark">
+  <div class="w" style="text-align:center">
+    <div style="font-size:38px;font-weight:700;color:white;letter-spacing:-0.02em;margin-bottom:12px">See the full platform in action</div>
+    <div style="font-size:16px;color:rgba(255,255,255,0.6);margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto">Book a personalized demo and we'll show you exactly how Amplify works for a church like yours.</div>
+    <button class="btn btn-white">Book a Demo</button>
+  </div>
+</div>
+
+<!-- ═══════════ SOLUTION PAGE ═══════════ -->
+<div class="page-label">Page Template — Solution (Service Planning)</div>
+
+<div class="hero">
+  <div class="w">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px">Service Planning</div>
+        <div style="font-size:44px;font-weight:700;color:white;line-height:1.1;letter-spacing:-0.02em;margin-bottom:16px">Your team. Prepared.<br>Every Sunday.</div>
+        <div style="font-size:16px;color:rgba(255,255,255,0.65);line-height:1.6;margin-bottom:32px">Coordinate volunteers, build service orders, and send automated reminders — all in one place. No more last-minute scrambles.</div>
+        <div style="display:flex;gap:12px">
+          <button class="btn btn-white">Book a Demo</button>
+          <button class="btn btn-ghost">Watch Overview</button>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,0.1);border-radius:12px;height:280px;display:flex;align-items:center;justify-content:center;border:0.5px solid rgba(255,255,255,0.12)">
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:24px;color:white">▶</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="w">
+    <div class="section-center">
+      <div class="section-eyebrow">Key features</div>
+      <div class="section-h2">Everything your worship team needs</div>
+    </div>
+    <div class="grid-3">
+      <div class="card"><div class="card-icon">📅</div><div class="card-title">Drag-and-drop scheduling</div><div class="card-body">Build your service order in minutes. Assign roles, set times, and share with your team instantly.</div></div>
+      <div class="card"><div class="card-icon">🔔</div><div class="card-title">Automated reminders</div><div class="card-body">Volunteers get notified automatically — so you're not chasing confirmations on Saturday night.</div></div>
+      <div class="card"><div class="card-icon">📱</div><div class="card-title">Mobile-first for volunteers</div><div class="card-body">Your team can confirm availability, view schedules, and access plans from their phone.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section alt">
+  <div class="w">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center">
+      <div style="background:#e0dfe8;border-radius:14px;height:300px"></div>
+      <div>
+        <div class="section-eyebrow">Impact</div>
+        <div class="section-h2" style="margin-bottom:16px">Less admin. More ministry.</div>
+        <div class="section-sub" style="margin-bottom:0">Churches using Amplify's service planning tools report dramatically less time spent on coordination — and dramatically more confidence going into Sunday.</div>
+        <div class="stat-row">
+          <div class="stat-item" style="text-align:left"><div class="stat-num">60%</div><div class="stat-label">Reduction in scheduling time</div></div>
+          <div class="stat-item" style="text-align:left"><div class="stat-num">3x</div><div class="stat-label">Faster volunteer onboarding</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="w">
+    <div class="frow">
+      <div><div class="feyebrow">Scheduling</div><div class="fh3">Build your service in minutes, not hours</div><div class="fbody">Drag roles into place, set run times, and attach notes for each segment. Share the full plan with your team in one click.</div></div>
+      <div class="fimg"></div>
+    </div>
+    <div class="frow">
+      <div class="fimg"></div>
+      <div><div class="feyebrow">Volunteer management</div><div class="fh3">Know who's ready before Sunday arrives</div><div class="fbody">See availability, track confirmed volunteers, and send reminders automatically — without a single manual follow-up.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section alt">
+  <div class="w">
+    <div class="section-center">
+      <div class="section-eyebrow">Testimonials</div>
+      <div class="section-h2">What worship teams say</div>
+    </div>
+    <div class="grid-3">
+      <div class="tcard"><div class="tquote">"My volunteers actually show up knowing what they're doing. That alone changed my Sundays."</div><div style="display:flex;align-items:center;gap:12px"><div class="tavatar"></div><div><div class="tname">Sarah M.</div><div class="trole">Worship Pastor · Multi-site church</div></div></div></div>
+      <div class="tcard"><div class="tquote">"We used to have a spreadsheet nightmare. Now everything is in one place and my team loves it."</div><div style="display:flex;align-items:center;gap:12px"><div class="tavatar"></div><div><div class="tname">David K.</div><div class="trole">Minister of Music</div></div></div></div>
+      <div class="tcard"><div class="tquote">"The automated reminders cut my follow-up time by 80%. I can focus on the actual service now."</div><div style="display:flex;align-items:center;gap:12px"><div class="tavatar"></div><div><div class="tname">Linda R.</div><div class="trole">Associate Pastor</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section dark">
+  <div class="w">
+    <div class="section-center">
+      <div class="section-eyebrow light">One platform</div>
+      <div class="section-h2 light" style="margin-bottom:12px">Service Planning is better with the full Amplify suite</div>
+      <div class="section-sub light">Connect your worship team's work to giving, people management, and communications in one integrated system.</div>
+    </div>
+    <div class="grid-4" style="margin-top:32px">
+      <div class="dark-card"><div style="font-size:16px;margin-bottom:10px">👥</div><div class="dark-card-title">People</div><div class="dark-card-body">Volunteer profiles & history in one place</div></div>
+      <div class="dark-card"><div style="font-size:16px;margin-bottom:10px">📱</div><div class="dark-card-title">Mobile App</div><div class="dark-card-body">Volunteers manage everything from their phone</div></div>
+      <div class="dark-card"><div style="font-size:16px;margin-bottom:10px">📣</div><div class="dark-card-title">Communications</div><div class="dark-card-body">Automated reminders & confirmations</div></div>
+      <div class="dark-card"><div style="font-size:16px;margin-bottom:10px">🎬</div><div class="dark-card-title">Streaming</div><div class="dark-card-body">Coordinate live & online services in one flow</div></div>
+    </div>
+    <div style="text-align:center;margin-top:48px">
+      <div style="font-size:28px;font-weight:700;color:white;margin-bottom:10px">See Service Planning in action</div>
+      <div style="font-size:15px;color:rgba(255,255,255,0.6);margin-bottom:24px">Book a personalized demo and we'll walk you through exactly how Amplify would work for your team.</div>
+      <button class="btn btn-white">Book a Demo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SERVICES OVERVIEW ═══════════ -->
+<div class="page-label">Page Template — Services Overview</div>
+
+<div class="hero" style="padding:80px 0">
+  <div class="w">
+    <div style="display:grid;grid-template-columns:55% 1fr;gap:48px;align-items:center">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px">Professional Services</div>
+        <div style="font-size:44px;font-weight:700;color:white;line-height:1.1;letter-spacing:-0.02em;margin-bottom:16px">We don't just hand you software.<br>We set you up to win.</div>
+        <div style="font-size:16px;color:rgba(255,255,255,0.65);line-height:1.6;margin-bottom:32px">From implementation to ongoing strategy, our team is with you every step of the way — so your church gets the most out of Amplify from day one.</div>
+        <button class="btn btn-white">Talk to Our Team</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="dark-card"><div class="dark-card-title">Implementation & Onboarding</div><div class="dark-card-body">Get up and running fast, with expert guidance</div></div>
+        <div class="dark-card"><div class="dark-card-title">Data Migration</div><div class="dark-card-body">Your history, safely moved to Amplify</div></div>
+        <div class="dark-card"><div class="dark-card-title">Ongoing Support & Training</div><div class="dark-card-body">Real humans, real answers, when you need them</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="w">
+    <div class="grid-3">
+      <div class="tcard"><div class="tquote">"The onboarding team was exceptional. We were live in three weeks with zero data loss."</div><div style="display:flex;align-items:center;gap:12px"><div class="tavatar"></div><div><div class="tname">Mark J.</div><div class="trole">Executive Pastor</div></div></div></div>
+      <div class="tcard"><div class="tquote">"They migrated 10 years of giving records without a single error. Our treasurer was amazed."</div><div style="display:flex;align-items:center;gap:12px"><div class="tavatar"></div><div><div class="tname">Rachel W.</div><div class="trole">Church Administrator</div></div></div></div>
+      <div class="tcard"><div class="tquote">"Support picks up the phone. That alone was worth the switch from our previous provider."</div><div style="display:flex;align-items:center;gap:12px"><div class="tavatar"></div><div><div class="tname">Tim B.</div><div class="trole">Associate Pastor</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section alt">
+  <div class="w">
+    <div class="section-center">
+      <div class="section-eyebrow">What we offer</div>
+      <div class="section-h2">Every church is different. Our services adapt.</div>
+    </div>
+    <div class="svc-list">
+      <div class="svc-row"><div class="svc-icon">🚀</div><div><div class="svc-title">Implementation & Onboarding</div><div class="svc-body">Our implementation team builds your Amplify environment, trains your staff, and ensures a smooth go-live — typically within 2–4 weeks.</div></div><div class="svc-arrow">›</div></div>
+      <div class="svc-row"><div class="svc-icon">📦</div><div><div class="svc-title">Data Migration</div><div class="svc-body">We handle the complex work of moving your member records, giving history, and financial data — accurately and securely.</div></div><div class="svc-arrow">›</div></div>
+      <div class="svc-row"><div class="svc-icon">🧭</div><div><div class="svc-title">Strategy & Consulting</div><div class="svc-body">Work directly with a church technology strategist to map your goals to Amplify's capabilities and build a roadmap for long-term success.</div></div><div class="svc-arrow">›</div></div>
+      <div class="svc-row"><div class="svc-icon">🎓</div><div><div class="svc-title">Support & Training</div><div class="svc-body">Ongoing access to our support team, self-serve knowledge base, live webinars, and dedicated account management.</div></div><div class="svc-arrow">›</div></div>
+      <div class="svc-row"><div class="svc-icon">⚙️</div><div><div class="svc-title">Managed Services</div><div class="svc-body">For churches that want Amplify fully managed — our team handles configuration, updates, and day-to-day platform administration.</div></div><div class="svc-arrow">›</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="w">
+    <div class="section-center">
+      <div class="section-eyebrow">Why it matters</div>
+      <div class="section-h2">Implementation done right changes everything</div>
+    </div>
+    <div class="grid-4">
+      <div class="card mid" style="text-align:center"><div class="card-icon" style="margin:0 auto 16px">⚡</div><div class="card-title">Faster time to value</div><div class="card-body">Most churches are fully live within 30 days of kick-off.</div></div>
+      <div class="card mid" style="text-align:center"><div class="card-icon" style="margin:0 auto 16px">🔒</div><div class="card-title">Zero data risk</div><div class="card-body">Certified migration with audit trails and rollback capability.</div></div>
+      <div class="card mid" style="text-align:center"><div class="card-icon" style="margin:0 auto 16px">🤝</div><div class="card-title">Dedicated humans</div><div class="card-body">A real implementation partner, not a ticket queue.</div></div>
+      <div class="card mid" style="text-align:center"><div class="card-icon" style="margin:0 auto 16px">📈</div><div class="card-title">Built for adoption</div><div class="card-body">Training designed around your team's roles — not generic walkthroughs.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section alt">
+  <div class="w">
+    <div class="section-center">
+      <div class="section-eyebrow">Plans</div>
+      <div class="section-h2">Choose the level of support that fits your church</div>
+    </div>
+    <div class="price-grid">
+      <div class="price-card"><div class="price-tier">Essential</div><div class="price-amt">Included</div><div class="price-period">with every Amplify plan</div><div class="price-feature"><span class="pcheck">✓</span> Self-serve onboarding resources</div><div class="price-feature"><span class="pcheck">✓</span> Email & chat support</div><div class="price-feature"><span class="pcheck">✓</span> Knowledge base access</div><div class="price-feature"><span class="pcheck">✓</span> Community forum</div><div style="margin-top:24px"><button class="btn btn-outline" style="width:100%">Get Started</button></div></div>
+      <div class="price-card featured"><div class="price-tier light">Growth</div><div class="price-amt light">Custom</div><div class="price-period light">based on church size</div><div class="price-feature light"><span class="pcheck light">✓</span> Dedicated implementation manager</div><div class="price-feature light"><span class="pcheck light">✓</span> Full data migration</div><div class="price-feature light"><span class="pcheck light">✓</span> Staff training sessions</div><div class="price-feature light"><span class="pcheck light">✓</span> Priority phone support</div><div style="margin-top:24px"><button class="btn btn-white" style="width:100%">Talk to Sales</button></div></div>
+      <div class="price-card"><div class="price-tier">Enterprise</div><div class="price-amt">Managed</div><div class="price-period">full-service option</div><div class="price-feature"><span class="pcheck">✓</span> Everything in Growth</div><div class="price-feature"><span class="pcheck">✓</span> Dedicated account manager</div><div class="price-feature"><span class="pcheck">✓</span> Ongoing managed services</div><div class="price-feature"><span class="pcheck">✓</span> Quarterly strategy reviews</div><div style="margin-top:24px"><button class="btn btn-outline" style="width:100%">Contact Us</button></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section dark">
+  <div class="w">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:32px;max-width:900px;margin:0 auto">
+      <div>
+        <div style="font-size:28px;font-weight:700;color:white;margin-bottom:8px">Not sure which services you need?</div>
+        <div style="font-size:15px;color:rgba(255,255,255,0.6);line-height:1.6">Talk to our team. We'll ask the right questions and recommend exactly what makes sense for your church — no upsell, no pressure.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;flex-shrink:0">
+        <button class="btn btn-white">Talk to Our Team</button>
+        <button class="btn btn-outline-light">View FAQ</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-function checkPw() {
-  const val = document.getElementById('pw-input').value;
-  if (val.toUpperCase() === 'WBOARD123') {
-    document.getElementById('gate').style.display = 'none';
-  } else {
-    const err = document.getElementById('pw-error');
-    err.textContent = 'Incorrect password';
-    document.getElementById('pw-input').style.borderBottomColor = '#e4572e';
-    setTimeout(() => { err.textContent = ''; document.getElementById('pw-input').style.borderBottomColor = '#3a3b50'; }, 2000);
-  }
-}
-function show(id, btn) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-strip button').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  btn.classList.add('active');
-}
-
-const RED = '#e4572e', INK = '#1d1e2c', MUT = '#8a8b97', RUL = '#e8e9f0';
-
-new Chart(document.getElementById('objChart'), {
-  type: 'radar',
-  data: { labels: ['Career Readiness','Business Management','Financial Literacy','Digital Literacy','Decision-Making','Civic Understanding','Community'],
-    datasets: [{ data: [85,90,95,70,88,80,75], borderColor: RED, backgroundColor: 'rgba(228,87,46,0.08)', borderWidth: 2, pointBackgroundColor: RED, pointRadius: 3 }] },
-  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
-    scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: RUL }, pointLabels: { font: { size: 11, family: 'Inter' }, color: INK } } } }
-});
-
-new Chart(document.getElementById('ganttChart'), {
-  type: 'bar',
-  data: { labels: ['Design & Dev','Prototype','Training','Pilot','Updates','Final Test'],
-    datasets: [{ data: [12,2,2,3,3,3], backgroundColor: [INK,RED,MUT,RED,MUT,INK], borderWidth: 0 }] },
-  options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
-    scales: { x: { grid: { color: RUL }, ticks: { font: { size: 11, family: 'Inter' }, color: MUT } }, y: { grid: { display: false }, ticks: { font: { size: 11, family: 'Inter' }, color: INK } } } }
-});
-
-new Chart(document.getElementById('moduleChart'), {
-  type: 'bubble',
-  data: { datasets: [
-    { label: 'POS System',        data: [{x:8,y:9,r:16}], backgroundColor: RED },
-    { label: 'Banking',           data: [{x:7,y:8,r:14}], backgroundColor: INK },
-    { label: 'Payroll',           data: [{x:6,y:7,r:12}], backgroundColor: '#555' },
-    { label: 'Loan System',       data: [{x:7,y:9,r:13}], backgroundColor: RED },
-    { label: 'Digital Marketing', data: [{x:5,y:6,r:11}], backgroundColor: MUT },
-    { label: 'Leaderboard (XP)',  data: [{x:4,y:8,r:10}], backgroundColor: INK },
-    { label: 'Voting',            data: [{x:3,y:5,r: 9}], backgroundColor: '#aaa' },
-    { label: 'AI Features',       data: [{x:9,y:7,r:10}], backgroundColor: RED },
-    { label: 'Billing',           data: [{x:5,y:7,r:10}], backgroundColor: '#666' },
-    { label: 'Radio',             data: [{x:2,y:4,r: 7}], backgroundColor: '#bbb' },
-    { label: 'Surveys',           data: [{x:3,y:6,r: 8}], backgroundColor: MUT },
-    { label: 'Team Builder',      data: [{x:6,y:5,r: 9}], backgroundColor: '#666' },
-  ]},
-  options: { responsive: true, maintainAspectRatio: false, layout: { padding: 20 },
-    plugins: { legend: { position: 'right', labels: { font: { size: 11, family: 'Inter' }, padding: 8, boxWidth: 8, color: INK } }, tooltip: { callbacks: { label: ctx => ctx.dataset.label } } },
-    scales: { x: { title: { display: true, text: 'Technical Complexity →', font: { size: 11, family: 'Inter' }, color: MUT }, min: 0, max: 11, grid: { color: RUL }, ticks: { display: false } },
-              y: { title: { display: true, text: 'Business Impact →', font: { size: 11, family: 'Inter' }, color: MUT }, min: 0, max: 11, grid: { color: RUL }, ticks: { display: false } } } }
-});
-
-new Chart(document.getElementById('rolesChart'), {
-  type: 'doughnut',
-  data: { labels: ['Students (150)','Volunteers (20)','Teachers (10)','JA Staff (3)'],
-    datasets: [{ data: [150,20,10,3], backgroundColor: [RED,INK,MUT,'#ccc'], borderWidth: 4, borderColor: '#fbfcff' }] },
-  options: { responsive: true, maintainAspectRatio: false, cutout: '68%',
-    plugins: { legend: { position: 'right', labels: { font: { size: 12, family: 'Inter' }, padding: 14, boxWidth: 10, color: INK } } } }
-});
-
-new Chart(document.getElementById('scaleChart'), {
-  type: 'bar',
-  data: { labels: ['Concurrent Users','Devices / Sim','Annual Records'],
-    datasets: [{ data: [5000,150,600000], backgroundColor: [RED,INK,MUT], borderWidth: 0 }] },
-  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
-    scales: { x: { grid: { display: false }, ticks: { font: { size: 11, family: 'Inter' }, color: INK } },
-              y: { type: 'logarithmic', grid: { color: RUL }, ticks: { font: { size: 10, family: 'Inter' }, color: MUT, callback: v => v >= 1000 ? (v/1000)+'K' : v } } } }
-});
-
-new Chart(document.getElementById('evalChart'), {
-  type: 'radar',
-  data: { labels: ['Executive Overview','Staffing','Approach','Design Capability','Schedule','Cost & Value'],
-    datasets: [{ data: [70,75,90,95,85,80], borderColor: RED, backgroundColor: 'rgba(228,87,46,0.08)', borderWidth: 2, pointBackgroundColor: RED, pointRadius: 3 }] },
-  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
-    scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: RUL }, pointLabels: { font: { size: 11, family: 'Inter' }, color: INK } } } }
-});
+var icons={"Giving":"$","Accounting":"=","People (ChMS)":"P","Websites":"W","Mobile App":"M","Communications":"@","Streaming":"▶","Service Planning":"✓","Media":"◉","Safety":"S"};
+var allProducts=[{name:"Giving",desc:"Online, text & recurring giving"},{name:"Accounting",desc:"Fund accounting built for churches"},{name:"People (ChMS)",desc:"Member records & group management"},{name:"Websites",desc:"Your digital front door"},{name:"Mobile App",desc:"Church in their pocket"},{name:"Communications",desc:"Email, text & push notifications"},{name:"Streaming",desc:"Live & on-demand services"},{name:"Service Planning",desc:"Plan & coordinate every service"},{name:"Media",desc:"Sermon content & distribution"},{name:"Safety",desc:"Check-in, background checks & protocols"}];
+var outcomes={
+  all:{desc:"The full Amplify platform — every tool working together as one connected system.",products:allProducts,gridClass:"all-grid"},
+  giving:{desc:"Tools that invite generosity and give your finance team full visibility.",products:[{name:"Giving",desc:"Online, text & recurring giving"},{name:"Accounting",desc:"Fund accounting built for churches"},{name:"Mobile App",desc:"Give from anywhere, anytime"},{name:"Communications",desc:"Generosity campaigns & appeals"}]},
+  engage:{desc:"Keep your congregation connected and actively participating between Sundays.",products:[{name:"People (ChMS)",desc:"Member records & group management"},{name:"Communications",desc:"Email, text & push notifications"},{name:"Mobile App",desc:"Church in their pocket"},{name:"Websites",desc:"Your digital front door"}]},
+  grow:{desc:"Expand your reach, convert first-time visitors, and retain the people who find you.",products:[{name:"Websites",desc:"First impression that converts"},{name:"Streaming",desc:"Live & on-demand services"},{name:"Media",desc:"Sermon content & distribution"},{name:"Mobile App",desc:"Retain & re-engage members"}]},
+  streamline:{desc:"Replace fragmented tools with one connected system so nothing falls through the cracks.",products:[{name:"People (ChMS)",desc:"One database for your whole church"},{name:"Service Planning",desc:"Plan & coordinate every service"},{name:"Safety",desc:"Check-in & safety protocols"},{name:"Communications",desc:"Automated workflows & scheduling"}]},
+  financial:{desc:"Accurate books, clean audits, and board-ready reporting — without the late nights.",products:[{name:"Accounting",desc:"Fund accounting & compliance"},{name:"Giving",desc:"Donor management & statements"}]},
+  volunteer:{desc:"Your team shows up prepared, on time, knowing exactly what's expected.",products:[{name:"Service Planning",desc:"Scheduling & role assignment"},{name:"People (ChMS)",desc:"Volunteer profiles & history"},{name:"Communications",desc:"Automated reminders & confirmations"},{name:"Mobile App",desc:"Volunteers manage availability on the go"}]},
+  digital:{desc:"Meet your congregation — and reach new ones — wherever they spend their time.",products:[{name:"Streaming",desc:"Broadcast live or on-demand"},{name:"Websites",desc:"A site that works as hard as you do"},{name:"Mobile App",desc:"Your branded church app"},{name:"Media",desc:"Manage & distribute content at scale"}]}
+};
+var simpleMenus={
+  who:{sections:[{icon:"👤",label:"By Role",items:["Executive / Senior Pastor","Associate Pastor","Finance Leader / Treasurer","Communications Director","Worship Pastor"]},{icon:"⛪",label:"By Church Type",items:["Multi-site Churches","Denominations & Networks","Large Churches","Growing Churches","Small Churches","Church Plants","Digital / Online Churches"]}]},
+  services:{sections:[{icon:"🛠",label:"Support & Delivery",items:["Services Overview","Managed Services","Implementation & Onboarding","Data Migration","Strategy & Consulting","Support & Training"]}]}
+};
+function renderRight(k){var o=outcomes[k],gc=o.gridClass||'';var cards=o.products.map(function(p){return'<div class="product-card"><div class="product-icon">'+(icons[p.name]||'·')+'</div><div class="product-name">'+p.name+'</div><div class="product-desc">'+p.desc+'</div></div>';}).join('');document.getElementById('rPanel').innerHTML='<div class="right-header">Relevant tools</div><div class="outcome-desc">'+o.desc+'</div><div class="products-grid '+gc+'">'+cards+'</div><div class="right-footer"><span class="rf-label">Not sure where to start?</span><span class="rf-link">Take the Healthy Church Assessment →</span></div>';}
+function buildSolutions(){var defs=[{k:'all',label:'All Solutions'},{k:'giving',label:'Increase Giving & Generosity'},{k:'engage',label:'Engage Your Church Community'},{k:'grow',label:'Grow Attendance & Reach'},{k:'streamline',label:'Streamline Church Operations'},{k:'financial',label:'Improve Financial Stewardship'},{k:'volunteer',label:'Strengthen Volunteer & Staff Effectiveness'},{k:'digital',label:'Launch & Scale Digital Ministry'}];var rows=defs.map(function(d,i){return'<div class="outcome-item'+(i===0?' active':'')+'" data-k="'+d.k+'">'+d.label+' <span class="arr">›</span></div>';}).join('');return'<div class="mega-inner"><div class="left-panel"><div class="left-label">What do you want to do?</div>'+rows+'<div class="left-divider"></div><div class="platform-btn"><span class="platform-btn-label">Platform Overview →</span><span class="platform-btn-sub">How Amplify works as one system</span></div></div><div class="right-panel" id="rPanel"></div></div>';}
+function buildSimple(k){return'<div class="simple-panel">'+simpleMenus[k].sections.map(function(s){return'<div class="s-section"><div class="s-category"><div class="s-cat-icon">'+s.icon+'</div><span class="s-cat-label">'+s.label+'</span></div>'+s.items.map(function(i){return'<span class="s-item">'+i+'</span>';}).join('')+'</div>';}).join('')+'</div>';}
+var cur=null,curBtn=null;
+function closeMenu(){if(curBtn)curBtn.classList.remove('open');var m=document.getElementById('megaMenu');if(m)m.classList.remove('show');cur=null;curBtn=null;}
+function openMenu(key,btn){if(cur===key)return;closeMenu();cur=key;curBtn=btn;btn.classList.add('open');var m=document.getElementById('megaMenu');if(key==='solutions'){m.innerHTML=buildSolutions();m.querySelectorAll('.outcome-item').forEach(function(el){el.addEventListener('mouseenter',function(){m.querySelectorAll('.outcome-item').forEach(function(i){i.classList.remove('active')});this.classList.add('active');renderRight(this.dataset.k);});});renderRight('all');}else{m.innerHTML=buildSimple(key);}m.classList.add('show');}
+document.addEventListener('click',function(e){if(!e.target.closest('#primaryNav')&&!e.target.closest('.utility-bar'))closeMenu();});
 </script>
-</body>
-</html>
